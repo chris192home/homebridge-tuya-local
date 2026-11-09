@@ -72,7 +72,12 @@ class TuyaLan {
         [this.log, this.config, this.api] = [...props];
 
         this.cachedAccessories = new Map();
-        this.api.hap.EnergyCharacteristics = require('./lib/EnergyCharacteristics')(this.api.hap);
+        this.EnergyCharacteristics = require('./lib/EnergyCharacteristics')(this.api.hap);
+        try {
+            this.api.hap.EnergyCharacteristics = this.EnergyCharacteristics;
+        } catch (e) {
+            this.log.warn('This Homebridge version does not allow extending api.hap; using per-accessory energy characteristics instead.');
+        }
 
         if(!this.config || !this.config.devices) {
             this.log("No devices found. Check that you have specified them in your config.json file.");
